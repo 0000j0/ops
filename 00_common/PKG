@@ -1,0 +1,31 @@
+
+
+PKG="
+memcached
+httpd
+mod_wsgi
+openstack-utils
+python-openstackclient
+"
+
+SVS="
+memcached
+"
+
+for p in ${PKG}
+do
+    echo ${p} | grep -q "^#" && continue
+    rpm -q ${p} && continue
+    yum -y install ${p}
+    read OK
+done
+
+for s in ${SVS}
+do
+    echo ${p} | grep -q "^#" && continue
+    systemctl enable ${s}
+    systemctl start ${s}
+    systemctl status ${s}
+    read OK
+done
+

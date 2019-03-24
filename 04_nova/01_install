@@ -1,0 +1,49 @@
+
+. ./.env
+
+{
+cat <<__EOL
+
+create database nova; 
+grant all privileges on nova.* to nova@'localhost' identified by '${PASS}'; 
+grant all privileges on nova.* to nova@'%' identified by '${PASS}'; 
+
+create database nova_api; 
+grant all privileges on nova_api.* to nova@'localhost' identified by '${PASS}'; 
+grant all privileges on nova_api.* to nova@'%' identified by '${PASS}'; 
+
+create database nova_placement; 
+grant all privileges on nova_placement.* to nova@'localhost' identified by '${PASS}'; 
+grant all privileges on nova_placement.* to nova@'%' identified by '${PASS}'; 
+
+create database nova_cell0; 
+grant all privileges on nova_cell0.* to nova@'localhost' identified by '${PASS}'; 
+grant all privileges on nova_cell0.* to nova@'%' identified by '${PASS}'; 
+
+flush privileges; 
+
+__EOL
+} | mysql -u root -p
+
+
+. ~/keystone_admin
+
+openstack user create --domain default --project service --password ${PASS} nova 
+openstack role add --project service --user nova admin
+openstack user create --domain default --project service --password ${PASS} placement 
+openstack role add --project service --user placement admin
+
+openstack service create --name nova --description "OpenStack Compute service" compute 
+openstack service create --name placement --description "OpenStack Compute Placement service" placement 
+
+openstack endpoint create --region RegionOne compute public http://${HOST}:8774/v2.1/%\(tenant_id\)s 
+openstack endpoint create --region RegionOne compute internal http://${HOST}:8774/v2.1/%\(tenant_id\)s 
+openstack endpoint create --region RegionOne compute admin http://${HOST}:8774/v2.1/%\(tenant_id\)s 
+
+openstack endpoint create --region RegionOne placement public http://${HOST}:8778 
+openstack endpoint create --region RegionOne placement internal http://${HOST}:8778 
+openstack endpoint create --region RegionOne placement admin http://${HOST}:8778 
+
+
+yum -y install openstack-nova
+

@@ -1,0 +1,5 @@
+
+. ./.env
+
+yum -y install openstack-nova-compute
+

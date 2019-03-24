@@ -1,0 +1,34 @@
+
+. ./.env
+
+CONF=${CONF_C}
+
+if [ ! -f ${CONF}.orig ]; then
+    cp -p ${CONF} ${CONF}.orig
+    mkdir -p ./conf
+    cp -p ${CONF}.orig ./conf
+fi
+
+FN=`basename ${CONF}`
+
+echo
+echo "== ${CONF} =="
+{
+cat <<__EOL
+[DEFAULT]
+#interface_driver = neutron.agent.linux.interface.OVSInterfaceDriver
+interface_driver = linuxbridge
+external_network_bridge =
+
+[agent]
+
+[ovs]
+
+__EOL
+} | tee ./conf/${FN}
+
+#cat ./conf/${FN} > ${CONF}
+
+chmod 640 ${CONF}
+chown root:neutron ${CONF}
+

@@ -1,0 +1,15 @@
+
+yum -y install mariadb-server
+
+echo
+echo "Next: edit /etc/my.cnf & add character-set-server=utf8 to mysqld section"
+read OK
+vim /etc/my.cnf
+
+systemctl enable mariadb
+systemctl start mariadb
+
+mysql_secure_installation
+
+echo "select user,host,password from mysql.user; show databases;" | mysql -u root -p
+

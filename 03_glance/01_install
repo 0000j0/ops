@@ -1,0 +1,22 @@
+
+. ./.env
+
+{
+cat <<__EOL
+create database glance; 
+grant all privileges on glance.* to glance@'localhost' identified by '${PASS}'; 
+grant all privileges on glance.* to glance@'%' identified by '${PASS}'; 
+flush privileges; 
+__EOL
+} | mysql -u root -p
+
+openstack user create --domain default --project service --password ${PASS} glance 
+openstack role add --project service --user glance admin
+openstack service create --name glance --description "OpenStack Image service" image 
+openstack endpoint create --region RegionOne image public http://${HOST}:9292 
+openstack endpoint create --region RegionOne image internal http://${HOST}:9292 
+openstack endpoint create --region RegionOne image admin http://${HOST}:9292 
+
+yum -y install openstack-glance
+
+

@@ -1,0 +1,17 @@
+
+. ./.env
+
+su -s /bin/bash keystone -c "keystone-manage db_sync"
+echo "db_sync rc=$?"
+keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone 
+echo "fernet_setup rc=$?"
+keystone-manage credential_setup --keystone-user keystone --keystone-group keystone
+echo "credential_setup rc=$?"
+
+keystone-manage bootstrap --bootstrap-password ${PASS} \
+  --bootstrap-admin-url http://${HOST}:35357/v3/ \
+  --bootstrap-internal-url http://${HOST}:35357/v3/ \
+  --bootstrap-public-url http://${HOST}:5000/v3/ \
+  --bootstrap-region-id RegionOne
+echo "bootstrap rc=$?"
+

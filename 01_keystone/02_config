@@ -1,0 +1,26 @@
+
+. ./.env
+
+if [ ! -f ${CONF}.orig ]; then
+    cp -p ${CONF} ${CONF}.orig
+    mkdir ./conf
+    cp -p ${CONF}.orig ./conf
+fi
+
+echo
+echo "== ${CONF} =="
+{
+cat <<__EOL
+[DEFAULT]
+[cache]
+memcache_servers = ${HOST}:11211
+[database]
+connection = mysql+pymysql://keystone:${PASS}@${HOST}/keystone
+[token]
+provider = fernet
+driver = memcache
+__EOL
+} | tee ./conf/`basename ${CONF}`
+
+cat ./conf/`basename ${CONF}` > ${CONF}
+

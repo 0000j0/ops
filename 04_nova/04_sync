@@ -1,0 +1,28 @@
+
+. ./.env
+
+su -s /bin/bash nova -c "nova-manage api_db sync"
+su -s /bin/bash nova -c "nova-manage cell_v2 map_cell0 \
+  --database_connection mysql+pymysql://nova:${PASS}@${HOST}/nova_cell0"
+su -s /bin/bash nova -c "nova-manage db sync"
+su -s /bin/bash nova -c "nova-manage cell_v2 create_cell --name cell1 \
+  --database_connection mysql+pymysql://nova:${PASS}@${HOST}/nova \
+  --transport-url rabbit://openstack:${PASS}@${HOST}:5672"
+
+echo restart httpd
+systemctl restart httpd 
+
+chown nova. /var/log/nova/nova-placement-api.log
+
+S="api consoleauth conductor scheduler novncproxy"
+for s in ${S}
+do
+    systemctl enable openstack-nova-${s}
+    systemctl restart openstack-nova-${s}
+    systemctl status openstack-nova-${s}
+    read OK
+done
+
+. ~/keystone_admin
+openstack compute service list 
+

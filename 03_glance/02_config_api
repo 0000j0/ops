@@ -1,0 +1,50 @@
+
+. ./.env
+
+CONF=${CONF_A}
+
+if [ ! -f ${CONF}.orig ]; then
+    cp -p ${CONF} ${CONF}.orig
+    mkdir -p ./conf
+    cp -p ${CONF}.orig ./conf
+fi
+
+FN=`basename ${CONF}`
+
+echo
+echo "== ${CONF} =="
+{
+cat <<__EOL
+[DEFAULT]
+bind_host = 0.0.0.0
+
+[glance_store]
+stores = file,http
+default_store = file
+filesystem_store_datadir = /var/lib/glance/images/
+
+[database]
+connection = mysql+pymysql://keystone:${PASS}@${HOST}/glance
+
+[keystone_authtoken]
+auth_uri = http://${HOST}:5000
+auth_url = http://${HOST}:35357
+memcached_servers = ${HOST}:11211
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+project_name = service
+username = glance
+password = ${PASS}
+
+[paste_deploy]
+flavor = keystone
+
+__EOL
+} | tee ./conf/${FN}
+
+cat ./conf/${FN} > ${CONF}
+
+chmod 640 ${CONF}
+chown root:glance ${CONF}
+

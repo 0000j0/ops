@@ -1,0 +1,7 @@
+
+su -s /bin/bash glance -c "glance-manage db_sync" 
+
+systemctl enable openstack-glance-api openstack-glance-registry 
+systemctl restart openstack-glance-api openstack-glance-registry 
+systemctl status openstack-glance-api openstack-glance-registry 
+

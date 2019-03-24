@@ -1,0 +1,14 @@
+
+. ./.env
+
+{
+cat <<__EOL
+create database keystone; 
+grant all privileges on keystone.* to keystone@'localhost' identified by '${PASS}'; 
+grant all privileges on keystone.* to keystone@'%' identified by '${PASS}'; 
+flush privileges; 
+__EOL
+} | mysql -u root -p
+
+yum -y install openstack-keystone
+

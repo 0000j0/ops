@@ -1,0 +1,40 @@
+
+. ./.env
+
+CONF=${CONF_F}
+
+if [ ! -f ${CONF}.orig ]; then
+    cp -p ${CONF} ${CONF}.orig
+    mkdir -p ./conf
+    cp -p ${CONF}.orig ./conf
+fi
+
+FN=`basename ${CONF}`
+
+echo
+echo "== ${CONF} =="
+{
+cat <<__EOL
+[DEFAULT]
+
+[agent]
+
+[linux_bridge]
+physical_interface_mappings = provider:PROVIDER_INTERFACE
+
+[securitygroup]
+firewall_driver = iptables
+
+[vxlan]
+enable_vxlan = True
+l2_population = True
+local_ip = OVERLAY_INTERFACE_IP_ADDRESS
+
+__EOL
+} | tee ./conf/${FN}
+
+#cat ./conf/${FN} > ${CONF}
+
+chmod 640 ${CONF}
+chown root:neutron ${CONF}
+

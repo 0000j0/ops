@@ -1,0 +1,35 @@
+
+. ./.env
+
+CONF=${CONF_E}
+
+if [ ! -f ${CONF}.orig ]; then
+    cp -p ${CONF} ${CONF}.orig
+    mkdir -p ./conf
+    cp -p ${CONF}.orig ./conf
+fi
+
+FN=`basename ${CONF}`
+
+echo
+echo "== ${CONF} =="
+{
+cat <<__EOL
+[DEFAULT]
+nova_metadata_host = ${HOST}
+metadata_proxy_shared_secret = metadata_secret
+
+[agent]
+
+[cache]
+memcache_servers = ${HOST}:11211
+
+__EOL
+} | tee ./conf/${FN}
+
+#cat ./conf/${FN} > ${CONF}
+
+chmod 640 ${CONF}
+chown root:neutron ${CONF}
+
+

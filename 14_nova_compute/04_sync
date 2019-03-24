@@ -1,0 +1,11 @@
+
+. ./.env
+
+systemctl start openstack-nova-compute 
+systemctl enable openstack-nova-compute
+su -s /bin/bash nova -c "nova-manage cell_v2 discover_hosts"
+
+. ~/keystone_admin
+openstack compute service list 
+
+

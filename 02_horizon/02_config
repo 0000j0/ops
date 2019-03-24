@@ -1,0 +1,26 @@
+
+. ./.env
+
+if [ ! -f ${CONF}.orig ]; then
+    cp -p ${CONF} ${CONF}.orig
+    mkdir -p ./conf
+    cp -p ${CONF}.orig ./conf
+fi
+
+FN=`basename ${CONF}`
+TM=${FN}.template
+
+echo
+echo "== ${CONF} =="
+
+cat ./conf/${TM} \
+| sed -e "s|@@HOST@@|${HOST}|g" \
+| sed -e "s|@@DOMAIN@@|${DOMAIN}|g" \
+| tee ./conf/${FN}
+
+diff ./conf/${FN}.orig ./conf/${FN}
+
+cat ./conf/${FN} > ${CONF}
+
+#systemctl restart httpd memcached
+

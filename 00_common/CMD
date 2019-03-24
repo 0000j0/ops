@@ -1,0 +1,5 @@
+
+#echo 7.5.1804 > /etc/yum/vars/releasever
+
+yum -y install centos-release-openstack-pike
+
