@@ -56,7 +56,7 @@ lock_path = $state_path/tmp
 __EOL
 } | tee ./conf/${FN}
 
-#cat ./conf/${FN} > ${CONF}
+cat ./conf/${FN} > ${CONF}
 
 chmod 640 ${CONF}
 chown root:neutron ${CONF}

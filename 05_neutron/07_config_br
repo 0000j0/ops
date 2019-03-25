@@ -20,7 +20,7 @@ cat <<__EOL
 [agent]
 
 [linux_bridge]
-physical_interface_mappings = provider:PROVIDER_INTERFACE
+physical_interface_mappings = provider:${PROVIDER_INTERFACE}
 
 [securitygroup]
 firewall_driver = iptables
@@ -28,12 +28,12 @@ firewall_driver = iptables
 [vxlan]
 enable_vxlan = True
 l2_population = True
-local_ip = OVERLAY_INTERFACE_IP_ADDRESS
+local_ip = ${OVERLAY_INTERFACE_IP_ADDRESS}
 
 __EOL
 } | tee ./conf/${FN}
 
-#cat ./conf/${FN} > ${CONF}
+cat ./conf/${FN} > ${CONF}
 
 chmod 640 ${CONF}
 chown root:neutron ${CONF}

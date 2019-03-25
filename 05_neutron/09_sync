@@ -1,7 +1,27 @@
 
-su -s /bin/bash glance -c "glance-manage db_sync" 
+#systemctl start openvswitch
+#systemctl enable openvswitch 
+#ovs-vsctl add-br br-int
 
-systemctl enable openstack-glance-api openstack-glance-registry 
-systemctl restart openstack-glance-api openstack-glance-registry 
-systemctl status openstack-glance-api openstack-glance-registry 
+#ln -s /etc/neutron/plugins/ml2/ml2_conf.ini /etc/neutron/plugin.ini 
+#su -s /bin/bash neutron -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugin.ini upgrade head"
+
+
+S="server dhcp-agent l3-agent metadata-agent openvswitch-agent"
+S="server dhcp-agent l3-agent metadata-agent linuxbridge-agent"
+
+for s in ${S}
+do
+    systemctl enable neutron-${s}
+    systemctl restart neutron-${s}
+    systemctl status neutron-${s}
+    read OK
+done
+
+#exit
+
+systemctl restart openstack-nova-api openstack-nova-compute
+
+. ~/keystone_admin
+openstack network agent list 
 

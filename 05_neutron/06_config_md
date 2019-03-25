@@ -27,7 +27,7 @@ memcache_servers = ${HOST}:11211
 __EOL
 } | tee ./conf/${FN}
 
-#cat ./conf/${FN} > ${CONF}
+cat ./conf/${FN} > ${CONF}
 
 chmod 640 ${CONF}
 chown root:neutron ${CONF}

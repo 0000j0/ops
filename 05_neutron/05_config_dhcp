@@ -28,7 +28,7 @@ enable_isolated_metadata = True
 __EOL
 } | tee ./conf/${FN}
 
-#cat ./conf/${FN} > ${CONF}
+cat ./conf/${FN} > ${CONF}
 
 chmod 640 ${CONF}
 chown root:neutron ${CONF}
